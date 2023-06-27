@@ -1,13 +1,7 @@
-    mov ben , 10
-
-l:  cmp ben,14
-    jG end 
-    add ben,2
-    add ayb,10
-    jmp l
+l: mov ayb , [31]
+add ayb,1
+mov [31] , ayb
+jmp l
 
 
-
-
-end: mov [21] , ayb
 

@@ -1,7 +1,6 @@
 package CPU;
 
 import CPU.ParserInstruction.ParserInstruction;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,17 +10,22 @@ public class CPU {
 
     public CPU() {
         this._RAM = new byte[_RAM_size];
-        this._registers = new byte[6];
-        this._registersName = new String[] { "AYB", "BEN", "GIM", "ECH", "DA" };
         this._inst_codes = new InstrucionCodes();
-
+        this._registers = new Registers();
     }
 
-    public void execute_program(String fileMame) {
+    public boolean execute_program(String fileMame) {
 
+        int limit = 1000;
         read_and_parse_file(fileMame);
         while (execute_instruction()) {
+            if (limit-- == 0) {
+                System.out.println("infinite loop: limit is over");
+                return false;
+            }
+
         }
+        return true;
     }
 
     private void read_and_parse_file(String fileMame) {
@@ -30,12 +34,12 @@ public class CPU {
             reader = new BufferedReader(new FileReader(fileMame));
             List<String> lines = reader.lines().toList();
 
-            ParserInstruction parsedData = new ParserInstruction(_registersName, _RAM_size, lines, _inst_codes);
+            ParserInstruction parsedData = new ParserInstruction(_registers, _RAM_size, lines, _inst_codes);
 
             // loader
             byte size = parsedData.load_instruction_to_RAM(_RAM);
             _free_memory_index = size;
-            _GH = 0;
+            _registers.set_instruction_pointer(0);
 
             // parsedData.print_binary_code();
             reader.close();
@@ -47,13 +51,15 @@ public class CPU {
     }
 
     private boolean execute_instruction() {
-        if (_GH >= _free_memory_index) {
+        if (_registers.get_instruction_pointer() >= _free_memory_index) {
             System.out.println("Program over successfully");
             return false;
         }
 
-        byte upCode = _RAM[_GH++];
-        byte enCode = _RAM[_GH++];
+        byte IP = _registers.get_instruction_pointer();
+        byte upCode = _RAM[IP++];
+        byte enCode = _RAM[IP++];
+        _registers.set_instruction_pointer(IP);
 
         byte instCode = _inst_codes.get_instruction_code(upCode);
 
@@ -78,26 +84,26 @@ public class CPU {
         byte memoryAddres = enCode;
 
         if (memoryAddres >= _free_memory_index) {
-            throw new RuntimeException("!JMP: this memory isn't free");
+            throw new RuntimeException("!JMP: this memory isn't public");
         }
 
         switch (_inst_codes.get_jumps_key(upCode)) {
             case "JMP":
-                _GH = memoryAddres;
+                _registers.set_instruction_pointer(memoryAddres);
                 return;
             case "JE":
-                if (_registers[4] == 0) {
-                    _GH = memoryAddres;
+                if (_registers.get_register_value("DA") == 0) {
+                    _registers.set_instruction_pointer(memoryAddres);
                 }
                 return;
             case "JG":
-                if (_registers[4] > 0) {
-                    _GH = memoryAddres;
+                if (_registers.get_register_value("DA") > 0) {
+                    _registers.set_instruction_pointer(memoryAddres);
                 }
                 return;
             case "JL":
-                if (_registers[4] < 0) {
-                    _GH = memoryAddres;
+                if (_registers.get_register_value("DA") < 0) {
+                    _registers.set_instruction_pointer(memoryAddres);
                 }
                 return;
         }
@@ -114,31 +120,32 @@ public class CPU {
 
         switch (_inst_codes.get_instruction_key(instCode)) {
             case "ADD":
-                _registers[regCode] = (byte) (op1 + op2);
+                _registers.set_register_value(regCode, (op1 + op2));
                 return;
             case "SUB":
-                _registers[regCode] = (byte) (op1 - op2);
+                _registers.set_register_value(regCode, (op1 - op2));
                 return;
             case "DIV":
-                _registers[regCode] = (byte) (op1 / op2);
+                _registers.set_register_value(regCode, (op1 / op2));
                 return;
             case "MUL":
-                _registers[regCode] = (byte) (op1 * op2);
+                _registers.set_register_value(regCode, (op1 * op2));
                 return;
             case "AND":
-                _registers[regCode] = (byte) (op1 & op2);
+                _registers.set_register_value(regCode, (op1 & op2));
                 return;
             case "OR":
-                _registers[regCode] = (byte) (op1 | op2);
+                _registers.set_register_value(regCode, (op1 | op2));
                 return;
             case "XOR":
-                _registers[regCode] = (byte) (op1 ^ op2);
+                _registers.set_register_value(regCode, (op1 ^ op2));
                 return;
             case "NOT":
-                _registers[regCode] = (byte) ~op1;
+                _registers.set_register_value(regCode, ~op1);
                 return;
             case "CMP":
-                _registers[4] = (byte) (op1 - op2);
+                _registers.set_register_value("DA", (op1 - op2));
+
                 return;
         }
     }
@@ -146,13 +153,14 @@ public class CPU {
     private void exe_mov(byte upCode, byte enCode) {
 
         if (_inst_codes.get_instruction_code(upCode) == 0b1011) {
+
             byte regCode = (byte) ((upCode & 0b00001110) >> 1);
-            _registers[regCode] = get_encode_operand(get_encode_type(upCode), enCode);
+            _registers.set_register_value(regCode, get_encode_operand(get_encode_type(upCode), enCode));
 
         } else {
             byte memoryCode = (byte) ((upCode & 0b00111110) >> 1);
             if (memoryCode < _free_memory_index) {
-                throw new RuntimeException("this memory isn't free");
+                throw new RuntimeException("this memory isn't public");
             }
             _RAM[memoryCode] = get_encode_operand(get_encode_type(upCode), enCode);
         }
@@ -168,13 +176,13 @@ public class CPU {
 
             if (type2 == "register") { // register
                 byte regCode = (byte) (enCode & 0b00011111);
-                return _registers[regCode];
+                return _registers.get_register_value(regCode);
             }
             if (type2 == "memory") { // memory
                 byte memoryCode = (byte) (enCode & 0b00011111);
 
                 if (memoryCode < _free_memory_index) {
-                    throw new RuntimeException("this memory isn't free");
+                    throw new RuntimeException("this memory isn't public");
                 }
 
                 return _RAM[memoryCode];
@@ -200,7 +208,7 @@ public class CPU {
     private byte get_upcode_operand(byte upCode) {
         byte regCode = (byte) ((upCode & 0b00001110) >> 1);
 
-        return _registers[regCode];
+        return _registers.get_register_value(regCode);
     }
 
     private String get_encode_type2(byte enCode) {
@@ -216,22 +224,23 @@ public class CPU {
                     .println("addres: " + i + (i < _free_memory_index ? "  privat" : "  public") + "  val: " + _RAM[i]);
         }
         System.out.println();
-        print_reg();
+        _registers.print_reg();
 
     }
 
-    public void print_reg() {
-        for (int i = 0; i < _registersName.length; ++i) {
-            System.out.println(_registersName[i] + " : val " + _registers[i]);
+    public void dump_free_memory() {
+        for (int i = _free_memory_index; i < _RAM.length; ++i) {
+            System.out
+                    .println("addres: " + i + "  val: " + _RAM[i]);
         }
+        System.out.println();
+        _registers.print_reg();
     }
 
-    private byte _GH; // instruction pointer
     private byte[] _RAM;
     private byte _RAM_size = 32;
     private byte _free_memory_index;
-    private byte[] _registers;
-    private String[] _registersName;
+    private Registers _registers;
     private InstrucionCodes _inst_codes;
 
 }

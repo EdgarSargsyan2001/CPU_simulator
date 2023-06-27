@@ -6,32 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 import CPU.InstrucionCodes;
+import CPU.Registers;
 
 public class ParserInstruction {
-    private Map<String, Byte> _labelTable = new HashMap<String, Byte>();
-    private short _lineIndex = 0;
-    private short _memorySize;
-    private ArrayList<Byte> _binaryCode = new ArrayList<Byte>();
-    private byte[] _instCode = new byte[] { 0, 0 };
-    private String[] _regsName;
 
-    public ParserInstruction(String[] regsName, int ramSize, List<String> lines, InstrucionCodes codes) {
+    public ParserInstruction(Registers registers, int ramSize, List<String> lines, InstrucionCodes codes) {
 
         this._memorySize = (short) ramSize;
-        this._regsName = regsName;
+        this._registers = registers;
 
         ArrayList<String> linesWithoutLabel = creat_label_table_ret_sub_lines(lines);
 
-        // for (Map.Entry<String, Byte> entry : _labelTable.entrySet()) {
-        // System.out.println(entry.getKey() + ": " + entry.getValue());
-        // }
-
         for (String line : linesWithoutLabel) {
             if (!parser_instruction(line, codes)) {
-                throw new Error("Dsfdsf");
+                throw new Error("!!!");
             }
         }
-
     }
 
     public boolean parser_instruction(String line, InstrucionCodes codes) {
@@ -59,13 +49,13 @@ public class ParserInstruction {
 
         switch (instCode[0]) {
             case 0:
-                return purce_mov(instCode[1], instCode[2], operands);
+                return parse_mov(instCode[1], instCode[2], operands);
             case 2:
                 return instruction_two_operands(instCode[1], operands);
             case 1:
                 return instruction_one_operand(instCode[1], operands);
             case 9:
-                return purce_jmps(instCode[1], instCode[2], operands);
+                return parse_jmps(instCode[1], instCode[2], operands);
             default:
                 return print_error("Error instruction type not found");
 
@@ -105,7 +95,7 @@ public class ParserInstruction {
 
     }
 
-    private boolean purce_mov(int instCode1, int instCode2, String operands) {
+    private boolean parse_mov(int instCode1, int instCode2, String operands) {
 
         String[] arr = operands.replaceAll(" ", "").split(",");
         if (arr.length != 2) {
@@ -114,10 +104,10 @@ public class ParserInstruction {
         String op1 = arr[0], op2 = arr[1];
 
         // first argument
-        if (is_register(op1)) {
+        if (_registers.is_register(op1)) {
 
             set_instruction(instCode1);
-            set_upcode_register_ref(get_register_code(op1));
+            set_upcode_register_ref(_registers.get_register_code(op1));
 
         } else if (is_memory_dereference(op1)) {
 
@@ -142,7 +132,7 @@ public class ParserInstruction {
         return true;
     }
 
-    private boolean purce_jmps(int instCode, int instCode2, String op1) {
+    private boolean parse_jmps(int instCode, int instCode2, String op1) {
         Byte referense = _labelTable.get(op1);
         if (referense == null) {
             return print_error("Error: label not found");
@@ -155,11 +145,11 @@ public class ParserInstruction {
     }
 
     private boolean parse_first_Byte(String op1, int instCode) {
-        if (!is_register(op1)) {
+        if (!_registers.is_register(op1)) {
             return print_error("Error: first argument most be register");
         }
         set_instruction(instCode);
-        set_upcode_register_ref(get_register_code(op1));
+        set_upcode_register_ref(_registers.get_register_code(op1));
         return true;
     }
 
@@ -172,9 +162,9 @@ public class ParserInstruction {
             }
             set_encode_literal(num);
 
-        } else if (is_register(op2)) {
+        } else if (_registers.is_register(op2)) {
 
-            set_encode_register_ref(get_register_code(op2));
+            set_encode_register_ref(_registers.get_register_code(op2));
 
         } else if (is_memory_dereference(op2)) {
 
@@ -188,26 +178,6 @@ public class ParserInstruction {
             return print_error("Error: second operand is invalid");
         }
         return true;
-    }
-
-    private Integer get_register_code(String rName) {
-        for (int i = 0; i < _regsName.length; ++i) {
-            if (_regsName[i].equals(rName.toUpperCase())) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private boolean is_register(String name) {
-
-        for (int i = 0; i < _regsName.length; ++i) {
-            if (_regsName[i].equals(name.toUpperCase())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private boolean print_error(String err) {
@@ -342,5 +312,12 @@ public class ParserInstruction {
             System.out.print(ans.charAt(i));
         }
     }
+
+    private Map<String, Byte> _labelTable = new HashMap<String, Byte>();
+    private ArrayList<Byte> _binaryCode = new ArrayList<Byte>();
+    private byte[] _instCode = new byte[] { 0, 0 };
+    private Registers _registers;
+    private short _lineIndex = 0;
+    private short _memorySize;
 
 }
