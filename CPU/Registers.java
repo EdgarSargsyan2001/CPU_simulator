@@ -16,6 +16,36 @@ public class Registers {
 
     }
 
+    public void set_flags_register(int result) {
+        /*
+         * ZA register
+         * bit index : flag name
+         * 0
+         * 1
+         * 2
+         * 3
+         * 4 : ZF(zero flag)
+         * 5 : CF(carry flag)
+         * 6 : SF(sign flag)
+         * 7 : OF(overflow flag)
+         */
+        byte flags = 0;
+        if (result > (1 << 9)) {
+            flags = (byte) (flags | (1 << 7));
+        }
+        if ((result >> 7 & 1) == 1) {
+            flags = (byte) (flags | (1 << 6));
+        }
+        if ((result >> 8 & 1) == 1) {
+            flags = (byte) (flags | (1 << 5));
+        }
+        if (result == 0) {
+            flags = (byte) (flags | (1 << 4));
+        }
+
+        set_register_value("ZA", flags);
+    }
+
     public boolean is_register(String name) {
         return _registersMap.keySet().contains(name.toUpperCase());
     }
@@ -103,7 +133,21 @@ public class Registers {
 
     public void print_reg() {
         for (Map.Entry<String, Byte[]> entry : _registersMap.entrySet()) {
-            System.out.println(entry.getKey() + ": val  " + entry.getValue()[1]);
+            if (entry.getKey().equals("ZA")) {
+                System.out.print(entry.getKey() + ":  flags: \n");
+
+                String ans = "";
+                for (int i = 0; i < 8; ++i) {
+                    ans += (entry.getValue()[1] >> i) & 1;
+                }
+                for (int k = 0, i = ans.length() - 1; i >= 4; --i, k += 2) {
+
+                    System.out.println(("\t"+"OFSFCFZF".substring(k, k + 2))+": " + ans.charAt(i) + " ");
+                }
+                System.out.println();
+            } else {
+                System.out.println(entry.getKey() + ": val  " + entry.getValue()[1]);
+            }
         }
     }
 

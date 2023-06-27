@@ -158,7 +158,7 @@ public class ParserInstruction {
 
             Integer num = Integer.parseInt(op2);
             if (num > 255) {
-                return print_error("Warning: value is greater than one byte");
+                return print_error("Error: value is greater than one byte");
             }
             set_encode_literal(num);
 

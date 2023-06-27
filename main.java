@@ -14,6 +14,7 @@ class main {
 
         intel.execute_program(args[0]);
         intel.dump_free_memory();
+        intel.print_registers_value();
     }
 
 }

@@ -112,42 +112,41 @@ public class CPU {
     private void do_inst(byte instCode, byte upCode, byte enCode) {
 
         byte regCode = (byte) ((upCode & 0b00001110) >> 1);
-        byte op1 = get_upcode_operand(upCode);
-        byte op2 = get_encode_operand(get_encode_type(upCode), enCode);
-        // System.out.println("key " + key);
-        // System.out.println("op1 " + op1);
-        // System.out.println("op2 " + op2);
+        int op1 = Byte.toUnsignedInt(get_upcode_operand(upCode));
+        int op2 = Byte.toUnsignedInt(get_encode_operand(get_encode_type(upCode), enCode));
+        int result = 0;
 
         switch (_inst_codes.get_instruction_key(instCode)) {
             case "ADD":
-                _registers.set_register_value(regCode, (op1 + op2));
-                return;
+                result = op1 + op2;
+                break;
             case "SUB":
-                _registers.set_register_value(regCode, (op1 - op2));
-                return;
+                result = (op1 - op2);
+                break;
             case "DIV":
-                _registers.set_register_value(regCode, (op1 / op2));
-                return;
+                result = (op1 / op2);
+                break;
             case "MUL":
-                _registers.set_register_value(regCode, (op1 * op2));
-                return;
+                result = (op1 * op2);
+                break;
             case "AND":
-                _registers.set_register_value(regCode, (op1 & op2));
-                return;
+                result = (op1 & op2);
+                break;
             case "OR":
-                _registers.set_register_value(regCode, (op1 | op2));
-                return;
+                result = (op1 | op2);
+                break;
             case "XOR":
-                _registers.set_register_value(regCode, (op1 ^ op2));
-                return;
+                result = (op1 ^ op2);
+                break;
             case "NOT":
-                _registers.set_register_value(regCode, ~op1);
-                return;
+                result = ~op1;
+                break;
             case "CMP":
                 _registers.set_register_value("DA", (op1 - op2));
-
                 return;
         }
+        _registers.set_register_value(regCode, result);
+        _registers.set_flags_register(result);
     }
 
     private void exe_mov(byte upCode, byte enCode) {
@@ -223,9 +222,6 @@ public class CPU {
             System.out
                     .println("addres: " + i + (i < _free_memory_index ? "  privat" : "  public") + "  val: " + _RAM[i]);
         }
-        System.out.println();
-        _registers.print_reg();
-
     }
 
     public void dump_free_memory() {
@@ -233,6 +229,9 @@ public class CPU {
             System.out
                     .println("addres: " + i + "  val: " + _RAM[i]);
         }
+    }
+
+    public void print_registers_value() {
         System.out.println();
         _registers.print_reg();
     }

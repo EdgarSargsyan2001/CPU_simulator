@@ -1,7 +1,14 @@
-l: mov ayb , [31]
-add ayb,1
-mov [31] , ayb
-jmp l
+    mov ayb , 0
+    mov ben , 1
+l:  cmp ben,20
+    jg end
+    add ayb,ben
+    add ben,1
+
+    jmp l
+
+end: mov [31] , ayb
+
 
 
 
