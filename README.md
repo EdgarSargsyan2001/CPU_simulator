@@ -1,5 +1,6 @@
 # CPU Simulator
 ## Compile only the main file with javac, after which you will get the main.class file. After running it, also transfer the code.txt file.
+   > You can also debug by adding the word **debugger** after code.txt
 
 1. You have the following registries
    
@@ -50,4 +51,4 @@
        DA < 0։ JԼ 
        DA  = 0 : JE
 + You can use both uppercase and lowercase letters for instruction and register names
-+ We have a set limit of 500 instruction execution to prevent infinite loop in the program
++ We have a set limit of 1000 instruction execution to prevent infinite loop in the program

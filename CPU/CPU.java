@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 
 public class CPU {
 
@@ -15,16 +16,31 @@ public class CPU {
         this._registers = new Registers();
     }
 
-    public boolean execute_program(String fileMame) {
-
-        int limit = 1000;
+    public boolean execute_program(String fileMame, String mode) {
         read_and_parse_file(fileMame);
-        while (execute_instruction()) {
-            if (limit-- == 0) {
-                System.out.println("infinite loop: limit is over");
-                return false;
+
+        if (mode.equals("debugger")) {
+            Scanner myObj = new Scanner(System.in);
+
+            while (execute_instruction()) {
+                dump_memory();
+                print_registers_value();
+                System.out.println("press Enter to go to next | to exit dial * ");
+                String option = myObj.nextLine();
+                if (option.equals("*")) {
+                    return false;
+                }
             }
 
+        } else {
+            int limit = 1000;
+            while (execute_instruction()) {
+                if (limit-- == 0) {
+                    System.out.println("infinite loop: limit is over");
+                    return false;
+                }
+
+            }
         }
         return true;
     }

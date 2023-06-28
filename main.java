@@ -9,12 +9,18 @@ class main {
         if (args.length == 0) {
             throw new Error("ERROR: input file name when running main");
         }
-
         CPU intel = new CPU();
 
-        intel.execute_program(args[0]);
-        intel.dump_free_memory();
-        intel.print_registers_value();
+        if (args.length == 2 && args[1].equals("debugger") ) {
+
+            intel.execute_program(args[0], "debugger");
+
+        } else {
+            intel.execute_program(args[0], "");
+            intel.dump_free_memory();
+            intel.print_registers_value();
+        }
+
     }
 
 }
