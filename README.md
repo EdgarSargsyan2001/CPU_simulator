@@ -18,6 +18,8 @@
 + We can specify a string using ':' before the instruction and giving the corresponding label.
 
 2. Have the following instructions set that accept:
+
+3. 
 | First argument       | Second argument |
 | -------------------- | ------------- |
 | Content Cell | Content Cell  |
