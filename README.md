@@ -18,7 +18,7 @@
 + We can specify a string using ':' before the instruction and giving the corresponding label.
 
 2. Have the following instructions set that accept:
-| First argument            | Second argument |
-| -------------             | ------------- |
-|| First  | Second  |       | Content Cell  |
-| Content Cell              | Content Cell  |
+| First argument       | Second argument |
+| -------------------- | ------------- |
+|| First  | Second  |  | Content Cell  |
+| Content Cell         | Content Cell  |
