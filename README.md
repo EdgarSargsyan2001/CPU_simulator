@@ -22,5 +22,5 @@
 3. 
 | First argument       | Second argument |
 | -------------------- | ------------- |
-| Content Cell | Content Cell  |
+| | First | Second | | Content Cell  |
 | Content Cell         | Content Cell  |
