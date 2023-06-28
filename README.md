@@ -19,10 +19,7 @@
 
 2. Have the following instructions set that accept:
 
-3. 
-| First argument       | Second argument |
-| -------------------- | ------------- |
-| | First | Second | | Content Cell |
-| | ----- | ------ | |
-| | gg | ff | |
-| Content Cell | Content Cell |
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
