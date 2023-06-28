@@ -3,7 +3,7 @@
 
 1. You have the following registries
    
-   | General purpose register | flags register |  FLAGS |
+   | General purpose register | Flags register |  FLAGS |
     | :---: | :---: |  :---: |
     | AYB  | ZA    |  OF     |
     | BEN  |       |  CF     |
