@@ -22,7 +22,7 @@
 3. 
 | First argument       | Second argument |
 | -------------------- | ------------- |
-| | First | Second |   | Content Cell  |
-|  | ----- | ------ |  |
-|  | gg | ff |         |
-| Content Cell         | Content Cell  |
+| | First | Second | | Content Cell |
+| | ----- | ------ | |
+| | gg | ff | |
+| Content Cell | Content Cell |
