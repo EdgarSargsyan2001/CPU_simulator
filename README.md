@@ -32,9 +32,15 @@
    | XOR  | +  -  |+ + +    |
    | NOT | +  -  | - - -    |
    | CMP    | +  -  | + + +   |
+   | isnt. name  | argument |
+    | ------------- | ------------- |
+    | JMP  | Label  |
+    | JG  | Label  |
+   | JL  | Label  |
+   | JE  | Label  |
 
 + the value of these operations is stored in the first register
-+ The response of the CMP operation is stored in the DA register, which is used by the JG, JL, GE instructions.
++ The response of the CMP operation is stored in the DA register, which is used by the JG, JL, JE instructions.
   
        DA > 0։ JG 
        DA < 0։ JԼ 
