@@ -3,7 +3,7 @@
 ***After running it, also transfer the code.txt file.***
 
 1. You have the following registries
-        > general use registers
+        + general use registers
             AYB 
             BEN
             GIM
