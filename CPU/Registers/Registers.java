@@ -1,4 +1,4 @@
-package CPU;
+package CPU.Registers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,36 +14,6 @@ public class Registers {
         _registersMap.put("ZA", new Byte[] { 0b101, 0 });
         _registersMap.put("GH", new Byte[] { 0b111, 0 });
 
-    }
-
-    public void set_flags_register(int result) {
-        /*
-         * ZA register
-         * bit index : flag name
-         * 0
-         * 1
-         * 2
-         * 3
-         * 4 : ZF(zero flag)
-         * 5 : CF(carry flag)
-         * 6 : SF(sign flag)
-         * 7 : OF(overflow flag)
-         */
-        byte flags = 0;
-        if (result > (1 << 9)) {
-            flags = (byte) (flags | (1 << 7));
-        }
-        if ((result >> 7 & 1) == 1) {
-            flags = (byte) (flags | (1 << 6));
-        }
-        if ((result >> 8 & 1) == 1) {
-            flags = (byte) (flags | (1 << 5));
-        }
-        if (result == 0) {
-            flags = (byte) (flags | (1 << 4));
-        }
-
-        set_register_value("ZA", flags);
     }
 
     public boolean is_register(String name) {
@@ -131,6 +101,36 @@ public class Registers {
         return get_register_value("GH");
     }
 
+    public void set_flags_register(int result) {
+        /*
+         * ZA register
+         * bit index : flag name
+         * 0
+         * 1
+         * 2
+         * 3
+         * 4 : ZF(zero flag)
+         * 5 : CF(carry flag)
+         * 6 : SF(sign flag)
+         * 7 : OF(overflow flag)
+         */
+        byte flags = 0;
+        if (result > (1 << 9)) {
+            flags = (byte) (flags | (1 << 7));
+        }
+        if ((result >> 7 & 1) == 1) {
+            flags = (byte) (flags | (1 << 6));
+        }
+        if ((result >> 8 & 1) == 1) {
+            flags = (byte) (flags | (1 << 5));
+        }
+        if (result == 0) {
+            flags = (byte) (flags | (1 << 4));
+        }
+
+        set_register_value("ZA", flags);
+    }
+
     public void print_reg() {
         for (Map.Entry<String, Byte[]> entry : _registersMap.entrySet()) {
             if (entry.getKey().equals("ZA")) {
@@ -142,7 +142,7 @@ public class Registers {
                 }
                 for (int k = 0, i = ans.length() - 1; i >= 4; --i, k += 2) {
 
-                    System.out.println(("\t"+"OFSFCFZF".substring(k, k + 2))+": " + ans.charAt(i) + " ");
+                    System.out.println(("\t" + "OFSFCFZF".substring(k, k + 2)) + ": " + ans.charAt(i) + " ");
                 }
                 System.out.println();
             } else {

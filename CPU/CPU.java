@@ -1,5 +1,6 @@
 package CPU;
 
+import CPU.Registers.Registers;
 import CPU.ParserInstruction.ParserInstruction;
 import java.io.BufferedReader;
 import java.io.FileReader;

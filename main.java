@@ -1,7 +1,7 @@
 import CPU.CPU;
 import CPU.ParserInstruction.ParserInstruction;
 import CPU.InstrucionCodes;
-import CPU.Registers;
+import CPU.Registers.Registers;
 
 class main {
     public static void main(String[] args) {

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import CPU.InstrucionCodes;
-import CPU.Registers;
+import CPU.Registers.Registers;
 
 public class ParserInstruction {
 
