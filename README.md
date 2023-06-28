@@ -22,4 +22,13 @@
     | isnt. name | First argument | Second argument |
     |        :---: |     :---:      |         :---:   |
     |    | register , memory  | register , memory , literal   |
-    |    | +      +  |    |
+    | MOV   | +  +  | + + +   |
+   | ADD   | + -  | + + +   |
+   | SUB    | +  -  | + + +   |
+   | MUL   | +  -  | + + +   |
+   | DIV   | +  -  | + + +   |
+   | AND   | +  -  | + + +   |
+   | OR   | +  -  | + + +   |
+   | XOR  | +  -  |+ + +    |
+   | NOT | +  -  | - - -    |
+   | CMP    | +  -  | + + +   |
