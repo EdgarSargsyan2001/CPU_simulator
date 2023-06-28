@@ -3,11 +3,11 @@
 ***After running it, also transfer the code.txt file.***
 
 + You have the following registries:
-        - general use registers
+        + general use registers
             AYB 
             BEN
             GIM
             DA
             ECH
-        - Flag register. where OF, CF, SF, ZF are inserted
+        + Flag register. where OF, CF, SF, ZF are inserted
             ZA
