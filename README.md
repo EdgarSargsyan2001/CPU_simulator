@@ -9,5 +9,6 @@
             GIM
             DA
             ECH
+    > 
     > Flag register. where OF, CF, SF, ZF are inserted
             ZA
