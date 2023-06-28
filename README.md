@@ -21,5 +21,5 @@
 
     | isnt. name | First argument | Second argument |
     |        :---: |     :---:      |         :---:   |
-    | git status   | git status     | git status      |
-    | git diff     | git diff       | git diff        |
+    |    | register | memory  |    |
+    |    |   |    |
