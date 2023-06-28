@@ -46,3 +46,5 @@
        DA > 0։ JG 
        DA < 0։ JԼ 
        DA  = 0 : JE
++ You can use both uppercase and lowercase letters for instruction and register names
++ We have a set limit of 500 instruction execution to prevent infinite loop in the program
