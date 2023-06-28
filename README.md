@@ -20,5 +20,5 @@
 2. Have the following instructions set that accept:
 | First argument       | Second argument |
 | -------------------- | ------------- |
-|| First  | Second  |  | Content Cell  |
+| Content Cell | Content Cell  |
 | Content Cell         | Content Cell  |
