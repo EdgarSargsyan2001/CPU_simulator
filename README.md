@@ -22,4 +22,4 @@
     | isnt. name | First argument | Second argument |
     |        :---: |     :---:      |         :---:   |
     |    | register , memory  | register , memory , literal   |
-    |    |   |    |
+    |    | + +  |    |
