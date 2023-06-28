@@ -19,7 +19,7 @@
 
 2. Have the following instructions set that accept:
 
-    | First Header  | Second Header |
-    | ------------- | ------------- |
-    | Content Cell  | Content Cell  |
-    | Content Cell  | Content Cell  |
+    | isnt. name | First argument | Second argument |
+    |        :---: |     :---:      |         :---:   |
+    | git status   | git status     | git status      |
+    | git diff     | git diff       | git diff        |
