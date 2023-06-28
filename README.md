@@ -2,7 +2,7 @@
 # Compile only the main file with javac, after which you will get the main.class file.
 ***After running it, also transfer the code.txt file.***
 
-+ You have the following registries:
++ You have the following registries
         + general use registers
             AYB 
             BEN
