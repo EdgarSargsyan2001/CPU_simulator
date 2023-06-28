@@ -35,3 +35,6 @@
 
 + the value of these operations is stored in the first register
 + The response of the CMP operation is stored in the DA register, which is used by the JG, JL, GE instructions.
+      > DA > 0։ JG 
+      > DA < 0։ JԼ 
+      > DA  = 0 : JE
