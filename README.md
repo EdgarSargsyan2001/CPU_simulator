@@ -1,7 +1,8 @@
 # CPU Simulator
 ## Compile only the main file with javac, after which you will get the main.class file. After running it, also transfer the code.txt file.
 
-1. You have the following registries 
+1. You have the following registries
+   
    | General purpose register | flags register | | FLAGS |
     | :---: | :---: |  :---: |
     | AYB  | ZA    |  OF     |
