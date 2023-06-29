@@ -1,13 +1,21 @@
-    mov ayb , 0
+PROC: main
     mov ben , 1
-l:  cmp ben,20
+l:  cmp ben,3
     jg end
-    add ayb,ben
     add ben,1
-
     jmp l
+end: call foo
+    call foo2
+    ret
 
-end: mov [31] , ayb
+
+PROC: foo
+    mov [30],ben
+    ret 
+PROC: foo2
+    add ben,10
+    mov [31],ben
+    ret
 
 
 

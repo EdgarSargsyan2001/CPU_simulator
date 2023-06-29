@@ -8,6 +8,8 @@ public class InstrucionCodes {
         this._instructionCode = new HashMap<String, Byte[]>();
 
         _instructionCode.put("MOV", new Byte[] { 0, 0b1011, 0b1100, 0b1101, 0b1110, 0b1111 });
+        _instructionCode.put("CALL", new Byte[] { 3, 0b1010, 0b101011 });
+        _instructionCode.put("RET", new Byte[] { 4, 0b1010, 0b101000 });
         _instructionCode.put("ADD", new Byte[] { 2, 0b0000 });
         _instructionCode.put("SUB", new Byte[] { 2, 0b0001 });
         _instructionCode.put("MUL", new Byte[] { 2, 0b0010 });

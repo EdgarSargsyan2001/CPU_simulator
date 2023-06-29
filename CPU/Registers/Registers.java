@@ -13,6 +13,8 @@ public class Registers {
         _registersMap.put("ECH", new Byte[] { 0b100, 0 });
         _registersMap.put("ZA", new Byte[] { 0b101, 0 });
         _registersMap.put("GH", new Byte[] { 0b111, 0 });
+        _registersMap.put("SS", new Byte[] { 10, 0 });
+        _registersMap.put("SP", new Byte[] { 11, 0 });
 
     }
 

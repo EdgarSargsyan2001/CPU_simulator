@@ -20,18 +20,18 @@ public class CPU {
         read_and_parse_file(fileMame);
 
         if (mode.equals("debugger")) {
-            Scanner myObj = new Scanner(System.in);
-
-            while (execute_instruction()) {
-                dump_memory();
-                print_registers_value();
-                System.out.println("press Enter to go to next | to exit dial * ");
-                String option = myObj.nextLine();
-                if (option.equals("*")) {
-                    return false;
+            try (Scanner myObj = new Scanner(System.in)) {
+                while (execute_instruction()) {
+                    dump_memory();
+                    print_registers_value();
+                    System.out.println("press Enter to go to next | to exit dial * ");
+                    String option = myObj.nextLine();
+                    if (option.equals("*")) {
+                        return false;
+                    }
                 }
+                myObj.close();
             }
-
         } else {
             int limit = 1000;
             while (execute_instruction()) {
@@ -68,10 +68,6 @@ public class CPU {
     }
 
     private boolean execute_instruction() {
-        if (_registers.get_instruction_pointer() >= _free_memory_index) {
-            System.out.println("Program over successfully");
-            return false;
-        }
 
         byte IP = _registers.get_instruction_pointer();
         byte upCode = _RAM[IP++];
@@ -79,7 +75,6 @@ public class CPU {
         _registers.set_instruction_pointer(IP);
 
         byte instCode = _inst_codes.get_instruction_code(upCode);
-
         switch (_inst_codes.get_instruction_type(instCode)) {
             case 0:
                 exe_mov(upCode, enCode);
@@ -88,12 +83,40 @@ public class CPU {
             case 2:
                 do_inst(instCode, upCode, enCode);
                 return true;
+            case 3:
+            case 4:
+                return exe_function_call_ret(upCode, enCode);
             case 9:
                 exe_jmps(upCode, enCode);
                 return true;
         }
 
         System.out.println("ERROR: instruction binary conde not found!");
+        return false;
+    }
+
+    private boolean exe_function_call_ret(byte upCode, byte enCode) {
+        String key = _inst_codes.get_jumps_key(upCode);
+        switch (key) {
+            case "CALL":
+                byte memoryAddres = enCode;
+                if (memoryAddres >= _free_memory_index) {
+                    throw new RuntimeException("!CALL: this memory isn't public");
+                }
+                push(_registers.get_instruction_pointer());
+                _registers.set_instruction_pointer(memoryAddres);
+                return true;
+            case "RET":
+                byte retAddres = pop();
+                if (retAddres == -1) {
+                    push((byte) -1);
+                    System.out.println("Program over successfully");
+                    return false;
+                }
+                _registers.set_instruction_pointer(retAddres);
+                return true;
+        }
+
         return false;
     }
 
@@ -232,6 +255,25 @@ public class CPU {
             return "memory";
         }
         return "register";
+    }
+
+    private byte pop() {
+        byte stack_pointer = _registers.get_register_value("SP");
+        byte val = _RAM[stack_pointer];
+        _registers.set_register_value("SP", stack_pointer + 1);
+        return val;
+    }
+
+    private boolean push(byte val) {
+
+        byte stack_pointer = _registers.get_register_value("SP");
+        if (stack_pointer == _registers.get_register_value("SS")) {
+            throw new Error("stack overflow");
+        }
+        _RAM[--stack_pointer] = val;
+
+        _registers.set_register_value("SP", stack_pointer);
+        return true;
     }
 
     public void dump_memory() {

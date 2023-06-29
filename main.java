@@ -11,11 +11,12 @@ class main {
         }
         CPU intel = new CPU();
 
-        if (args.length == 2 && args[1].equals("debugger") ) {
+        if (args.length == 2 && args[1].equals("debugger")) {
 
             intel.execute_program(args[0], "debugger");
 
         } else {
+            // intel.execute_program(args[0], "debugger");
             intel.execute_program(args[0], "");
             intel.dump_free_memory();
             intel.print_registers_value();

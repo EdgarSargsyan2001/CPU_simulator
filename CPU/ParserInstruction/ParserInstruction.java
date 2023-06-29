@@ -12,7 +12,7 @@ public class ParserInstruction {
 
     public ParserInstruction(Registers registers, int ramSize, List<String> lines, InstrucionCodes codes) {
 
-        this._memorySize = (short) ramSize;
+        this._memory_size = (short) ramSize;
         this._registers = registers;
 
         ArrayList<String> linesWithoutLabel = creat_label_table_ret_sub_lines(lines);
@@ -31,15 +31,18 @@ public class ParserInstruction {
             return true;
         }
         int instEnd = line.indexOf(" ");
+        if (instEnd == -1) {
+            instEnd = line.length();
+        }
 
         String instName = line.substring(0, instEnd).trim().toUpperCase();
         if (instName.isEmpty()) {
-            return print_error("Syntax Error");
+            return print_error("Syntax Error 1");
         }
 
         String operands = line.substring(instEnd, line.length()).trim();
         if (operands.isEmpty()) {
-            return print_error("Syntax Error");
+            return print_error("Syntax Error 2");
         }
 
         Byte[] instCode = codes.get_instruction_info(instName);
@@ -52,6 +55,10 @@ public class ParserInstruction {
                 return parse_mov(instCode[1], instCode[2], operands);
             case 2:
                 return instruction_two_operands(instCode[1], operands);
+            case 3:
+                return function_call(instCode[1], instCode[2], operands);
+            case 4:
+                return function_ret(instCode[1], instCode[2], operands);
             case 1:
                 return instruction_one_operand(instCode[1], operands);
             case 9:
@@ -79,6 +86,30 @@ public class ParserInstruction {
         }
 
         // save binary data
+        add_instCode_to_binaryCode();
+        return true;
+    }
+
+    private boolean function_ret(int instCode, int instCode2, String op1) {
+        int value = 0;
+        if (is_numeric(op1)) {
+            value = Integer.parseInt(op1);
+        }
+        set_instruction(instCode);
+        set_upcode_label(value, instCode2);
+
+        add_instCode_to_binaryCode();
+        return true;
+    }
+
+    private boolean function_call(int instCode, int instCode2, String op1) {
+        Byte referense = _labelTable.get(op1);
+        if (referense == null) {
+            return print_error("Error: Function name not found");
+        }
+        set_instruction(instCode);
+        set_upcode_label(referense, instCode2);
+
         add_instCode_to_binaryCode();
         return true;
     }
@@ -113,7 +144,7 @@ public class ParserInstruction {
 
             set_instruction(instCode2);
             int num = memory_dereference(op1);
-            if (num >= _memorySize) {
+            if (num >= _memory_size) {
                 return print_error("Error: number is larger than memory size");
             }
             set_upcode_reference(num);
@@ -169,7 +200,7 @@ public class ParserInstruction {
         } else if (is_memory_dereference(op2)) {
 
             int num = memory_dereference(op2);
-            if (num >= _memorySize) {
+            if (num >= _memory_size) {
                 return print_error("Error: number is larger than memory size");
             }
             set_encode_reference(num);
@@ -256,24 +287,38 @@ public class ParserInstruction {
 
         int lineIndex = 1, instructionAddres = 0;
         for (String line : lines) {
+            boolean isChangeAddres = true;
 
             if (line.contains(":")) {
                 int labelIndex = line.indexOf(':');
-                linesWithoutLabel.add(line.substring(labelIndex + 1, line.length()).trim());
+                String label = line.trim().substring(0, labelIndex);
+                String newLine = line.substring(labelIndex + 1, line.length()).trim();
 
-                if (!line.isEmpty()) {
-                    String label = line.substring(0, labelIndex).trim();
-                    if (_labelTable.get(label) != null) {
-                        throw new Error("line: " + lineIndex + " Error: that label already exists", null);
-                    }
-                    _labelTable.put(label, (byte) instructionAddres);
+                if (label.toUpperCase().equals("PROC")) {
+                    label = line.trim().substring(labelIndex + 1, line.length()).trim();
+                    newLine = "";
+                    _stack_size++;
                 }
 
+                linesWithoutLabel.add(newLine);
+                if (newLine.isEmpty()) {
+                    isChangeAddres = false;
+                }
+
+                if (_labelTable.get(label) != null) {
+                    throw new Error("line: " + lineIndex + " Error: that label already exists", null);
+                }
+                _labelTable.put(label, (byte) instructionAddres);
+
             } else {
-                linesWithoutLabel.add(line.trim());
+                String l = line.trim();
+                if (l.toUpperCase().equals("RET")) {
+                    l = (l + " 0");
+                }
+                linesWithoutLabel.add(l);
             }
 
-            if (!line.isEmpty()) {
+            if (!line.isEmpty() && isChangeAddres) {
                 instructionAddres += 2;
             }
             lineIndex++;
@@ -287,7 +332,13 @@ public class ParserInstruction {
             RAM[i] = _binaryCode.get(i);
             size++;
         }
-        return size;
+        _registers.set_register_value("SS", size);
+        size += (_stack_size - 1);
+
+        _registers.set_register_value("SP", size);
+        RAM[size] = -1;
+
+        return (byte) (size + 1);
     }
 
     public void print_binary_code() {
@@ -318,6 +369,7 @@ public class ParserInstruction {
     private byte[] _instCode = new byte[] { 0, 0 };
     private Registers _registers;
     private short _lineIndex = 0;
-    private short _memorySize;
+    private byte _stack_size = 1;
+    private short _memory_size;
 
 }
