@@ -18,7 +18,9 @@ class main {
         } else {
             // intel.execute_program(args[0], "debugger");
             intel.execute_program(args[0], "");
-            intel.dump_free_memory();
+            intel.dump_memory();
+            // intel.dump_free_memory();
+            intel.print_stack();
             intel.print_registers_value();
         }
 

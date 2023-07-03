@@ -1,21 +1,18 @@
 PROC: main
-    mov ben , 1
 l:  cmp ben,3
     jg end
     add ben,1
+    call foo
     jmp l
-end: call foo
-    call foo2
+end: 
     ret
-
 
 PROC: foo
-    mov [30],ben
+    add gim , ben
+    mul gim , 2
+    mov [46],gim
     ret 
-PROC: foo2
-    add ben,10
-    mov [31],ben
-    ret
+
 
 
 

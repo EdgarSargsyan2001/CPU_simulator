@@ -197,10 +197,11 @@ public class CPU {
             _registers.set_register_value(regCode, get_encode_operand(get_encode_type(upCode), enCode));
 
         } else {
-            byte memoryCode = (byte) ((upCode & 0b00111110) >> 1);
+            byte memoryCode = (byte) (((upCode & 0b00111110) >> 1) + (_segment << 5));
             if (memoryCode < _free_memory_index) {
                 throw new RuntimeException("this memory isn't public");
             }
+
             _RAM[memoryCode] = get_encode_operand(get_encode_type(upCode), enCode);
         }
 
@@ -218,7 +219,7 @@ public class CPU {
                 return _registers.get_register_value(regCode);
             }
             if (type2 == "memory") { // memory
-                byte memoryCode = (byte) (enCode & 0b00011111);
+                byte memoryCode = (byte) ((enCode & 0b00011111) + (_segment << 5));
 
                 if (memoryCode < _free_memory_index) {
                     throw new RuntimeException("this memory isn't public");
@@ -267,6 +268,7 @@ public class CPU {
     private boolean push(byte val) {
 
         byte stack_pointer = _registers.get_register_value("SP");
+        // print_stack();
         if (stack_pointer == _registers.get_register_value("SS")) {
             throw new Error("stack overflow");
         }
@@ -283,6 +285,15 @@ public class CPU {
         }
     }
 
+    public void print_stack() {
+        byte sp = _registers.get_register_value("SP");
+        byte ss = _registers.get_register_value("SS");
+        System.out.println("stack");
+        for (int i = ss; i <= sp; ++i) {
+            System.out.println("addres: " + i + "  val: " + _RAM[i]);
+        }
+    }
+
     public void dump_free_memory() {
         for (int i = _free_memory_index; i < _RAM.length; ++i) {
             System.out
@@ -296,7 +307,8 @@ public class CPU {
     }
 
     private byte[] _RAM;
-    private byte _RAM_size = 32;
+    private byte _RAM_size = 64;
+    private byte _segment = 1;
     private byte _free_memory_index;
     private Registers _registers;
     private InstrucionCodes _inst_codes;

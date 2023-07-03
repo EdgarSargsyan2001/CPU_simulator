@@ -333,7 +333,7 @@ public class ParserInstruction {
             size++;
         }
         _registers.set_register_value("SS", size);
-        size += (_stack_size - 1);
+        size += (_stack_size - 1)+5;
 
         _registers.set_register_value("SP", size);
         RAM[size] = -1;
