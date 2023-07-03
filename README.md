@@ -14,9 +14,7 @@
     |            DA            |                |  ZF   |
     |           ECH            |                |       |
 
-    > Flag register: where OF, CF, SF, ZF are inserted
-
-             ZA
+    > Flag register: where OF, CF, SF, ZF are inserted ZA
 
 - We have 64 bytes of RAM where the program is installed.
 - Each assignment is 2 bytes of memory and is placed in RAM from address 0 to 32 bytes, and the rest is usable.
@@ -40,7 +38,7 @@
    |    NOT     |        + -        |            - - -            |
    |    CMP     |        + -        |            + + +            |
 
-   > You can declare functions using "PROC:" function name and writing "ret" at the end
+   > You can declare functions using "PROC: function name " and writing "ret" at the end
 
    | isnt. name | argument   |
    | ---------- | ---------- |
